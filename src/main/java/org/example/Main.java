@@ -2,15 +2,12 @@ package org.example;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         AtomicInteger lengthThree = new AtomicInteger(0);
         AtomicInteger lengthFour = new AtomicInteger(0);
@@ -31,28 +28,34 @@ public class Main {
                 }
             }
         });
+        thread.start();
         Thread thread1 = new Thread(() -> {
             for (String text : texts) {
-                if(oneLetter(text)) {
+                if (oneLetter(text)) {
                     if (text.length() == 3) lengthThree.incrementAndGet();
                     if (text.length() == 4) lengthFour.incrementAndGet();
                     if (text.length() == 5) lengthFive.incrementAndGet();
                 }
             }
         });
-        Thread thread3 = new Thread(() -> {
+        thread1.start();
+        Thread thread2 = new Thread(() -> {
             for (String text : texts) {
-                if(increasingCharacters(text)) {
+                if (increasingCharacters(text)) {
                     if (text.length() == 3) lengthThree.incrementAndGet();
                     if (text.length() == 4) lengthFour.incrementAndGet();
                     if (text.length() == 5) lengthFive.incrementAndGet();
                 }
             }
         });
+        thread2.start();
 
-        System.out.println(lengthThree);
-        System.out.println(lengthFour);
-        System.out.println(lengthFive);
+        thread.join();
+        thread1.join();
+        thread2.join();
+        System.out.println("Красивых слов с длиной 3: " + lengthThree + " шт.");
+        System.out.println("Красивых слов с длиной 4: " + lengthFour + " шт.");
+        System.out.println("Красивых слов с длиной 3: " + lengthFive + " шт.");
     }
 
     public static String generateText(String letters, int length) {
@@ -65,7 +68,7 @@ public class Main {
     }
 
     public static boolean isPalindromeUsingIntStream(String text) {
-        String temp  = text.replaceAll("\\s+", "").toLowerCase();
+        String temp = text.replaceAll("\\s+", "").toLowerCase();
         return IntStream.range(0, temp.length() / 2)
                 .noneMatch(i -> temp.charAt(i) != temp.charAt(temp.length() - i - 1));
     }
