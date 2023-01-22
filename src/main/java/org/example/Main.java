@@ -55,7 +55,7 @@ public class Main {
         thread2.join();
         System.out.println("Красивых слов с длиной 3: " + lengthThree + " шт.");
         System.out.println("Красивых слов с длиной 4: " + lengthFour + " шт.");
-        System.out.println("Красивых слов с длиной 3: " + lengthFive + " шт.");
+        System.out.println("Красивых слов с длиной 5: " + lengthFive + " шт.");
     }
 
     public static String generateText(String letters, int length) {
